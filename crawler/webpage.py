@@ -28,16 +28,19 @@ class WebPage:
     def __init__(self, url: str):
         self.url = url
         self.text = None
+        self.headers = None
         self._page = None
+        self.page_encoding = None
         self._meta_robots_tags = None
 
     def load(self, user_agent: str) -> bool:
         response = requests.get(self.url, headers={"user-agent": user_agent})
-
         if response.status_code != requests.codes.ok:
             return False
 
         self.text = response.text
+        self.encoding = response.encoding
+        self.headers = response.headers
         self._page = BeautifulSoup(response.text, "html.parser")
         self._meta_robots_tags = WebPage._parse_meta_robots_tags(self._page)
         return True

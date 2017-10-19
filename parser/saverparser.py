@@ -1,0 +1,36 @@
+import logging
+
+from .parser import Parser
+from pony.orm import db_session
+from crawler.webpage import WebPage
+from hashlib import md5
+from data.document import Document
+import email.utils
+import os
+
+
+class SaverParser(Parser):
+    def __init__(self, path_to_save):
+        self._logger = logging.getLogger(self.__class__.__name__)
+        self.path_to_save = path_to_save
+
+        if not os.path.exists(path_to_save):
+            os.makedirs(path_to_save)
+
+    @db_session
+    def parse(self, web_page: WebPage) -> bool:
+        raw_text = web_page.text.encode(web_page.encoding)
+
+        m = md5()
+        m.update(raw_text)
+        page_hash = m.hexdigest()
+
+        page_date = email.utils.parsedate_to_datetime(web_page.headers['last-modified'])
+        file_path = os.path.join(self.path_to_save, page_hash)
+
+        with open(file_path, 'wb') as f:
+            f.write(raw_text)
+        Document(url=web_page.url, file_path=file_path, document_date=page_date, document_hash=page_hash)
+
+        self._logger.info("Saved url: {}".format(web_page.url))
+        return True
