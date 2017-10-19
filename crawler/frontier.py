@@ -11,7 +11,7 @@ def parse_url(url):
 
 class Frontier:
     def __init__(self, urls: {str}, allowed: {str}):
-        self.allowed = allowed
+        self.allowed = list(map(lambda url: parse_url(url)[1], allowed))
         self._websites = {}
         self._queue = deque()
 

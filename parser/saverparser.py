@@ -25,8 +25,14 @@ class SaverParser(Parser):
         m.update(raw_text)
         page_hash = m.hexdigest()
 
-        page_date = email.utils.parsedate_to_datetime(web_page.headers['last-modified'])
+        page_date = email.utils.parsedate_to_datetime(
+            web_page.headers['last-modified']
+        ) if 'last-modified' in web_page.headers else None
+
         file_path = os.path.join(self.path_to_save, page_hash)
+        if os.path.exists(file_path):
+            self._logger.warn("Duplicate page found for url: {}".format(web_page.url))
+            return False
 
         with open(file_path, 'wb') as f:
             f.write(raw_text)
