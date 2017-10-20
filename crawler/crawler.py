@@ -36,7 +36,10 @@ class Crawler(Process):
             time_ms = utils.current_time_ms()
 
             # skip the iteration if the waiting time has not passed yet
-            if website.last_time + self.delay > time_ms:
+            crawler_delay = website.crawl_delay(self.user_agent)
+            if not crawler_delay:
+                crawler_delay = self.delay
+            if website.last_time + crawler_delay > time_ms:
                 continue
 
             url, depth = website.get_url()

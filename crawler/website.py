@@ -27,5 +27,8 @@ class Website:
     def get_url(self) -> (str, int):
         return self._queue.popleft()
 
+    def crawl_delay(self, user_agent: str) -> int:
+        return self._robot_parser.crawl_delay(user_agent) * 1000
+
     def is_empty(self) -> bool:
         return len(self._queue) == 0
