@@ -35,7 +35,8 @@ class WebPage:
         self._meta_robots_tags = None
 
     def load(self, user_agent: str) -> bool:
-        response = requests.get(self.url, headers={"user-agent": user_agent})
+        response = requests.get(self.url, headers={"user-agent": user_agent, "accept": "text/plain"})
+
         if response.status_code != requests.codes.ok:
             return False
 

@@ -31,7 +31,7 @@ class SaverParser(Parser):
 
         file_path = os.path.join(self.path_to_save, page_hash)
         if os.path.exists(file_path):
-            self._logger.warn("Duplicate page found for url: {}".format(web_page.url))
+            self._logger.warning("Duplicate page found for url: {}".format(web_page.url))
             return False
 
         with open(file_path, 'wb') as f:
