@@ -1,14 +1,9 @@
-import argparse
 import json
 
 from crawler import Frontier, Crawler
 from parser import SaverParser
 
-parser = argparse.ArgumentParser(description="Run crawler")
-
 if __name__ == "__main__":
-    args = parser.parse_args()
-
     with open("config/crawler.json") as file:
         # read configuration file
         config = json.load(file)
@@ -16,7 +11,6 @@ if __name__ == "__main__":
     with open("config/hosts.json") as file:
         hosts = json.load(file)["hosts"]
 
-    frontier = Frontier(urls={"https://www.palantir.com/careers/"}, allowed={"www.palantir.com"})
     parser = SaverParser("webdata")
 
     for host in hosts:
