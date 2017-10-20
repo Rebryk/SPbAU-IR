@@ -2,6 +2,7 @@ from urllib.parse import urlparse, urljoin
 
 import requests
 from bs4 import BeautifulSoup
+from urltools import normalize
 
 
 class RobotsTag:
@@ -46,7 +47,7 @@ class WebPage:
         return True
 
     def get_urls(self):
-        return {get_absolute_url(self.url, link.get("href")) for link in self._page.find_all(name="a")}
+        return {normalize(get_absolute_url(self.url, link.get("href"))) for link in self._page.find_all(name="a")}
 
     @property
     def none(self):
