@@ -26,6 +26,8 @@ def get_absolute_url(base, url):
 
 
 class WebPage:
+    CONTENT_TYPE = ["text/html; charset=utf-8", "application/x-eprint"]
+
     def __init__(self, url: str):
         self.url = url
         self.text = None
@@ -35,7 +37,17 @@ class WebPage:
         self._meta_robots_tags = None
 
     def load(self, user_agent: str) -> bool:
-        response = requests.get(self.url, headers={"user-agent": user_agent, "accept": "text/plain"})
+        header = {"user-agent": user_agent}
+        response = requests.head(self.url, headers=header)
+
+        if response.status_code != requests.codes.ok:
+            return False
+
+        # ignore extra pages
+        if response.headers["content-type"] not in WebPage.CONTENT_TYPE:
+            return False
+
+        response = requests.get(self.url, headers=header)
 
         if response.status_code != requests.codes.ok:
             return False
