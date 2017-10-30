@@ -1,3 +1,4 @@
+import cgi
 from urllib.parse import urlparse, urljoin
 
 import requests
@@ -26,7 +27,7 @@ def get_absolute_url(base, url):
 
 
 class WebPage:
-    CONTENT_TYPE = ["text/html; charset=utf-8", "application/x-eprint"]
+    MIME_TYPES = ["text/html", "application/x-eprint"]
 
     def __init__(self, url: str):
         self.url = url
@@ -40,16 +41,18 @@ class WebPage:
         header = {"user-agent": user_agent}
         response = requests.head(self.url, headers=header)
 
-        if response.status_code != requests.codes.ok:
+        if not response.ok or "content-type" not in response.headers:
             return False
 
         # ignore extra pages
-        if response.headers["content-type"] not in WebPage.CONTENT_TYPE:
+        mimetype, _ = cgi.parse_header(response.headers["content-type"])
+        if mimetype not in WebPage.MIME_TYPES:
+            print(mimetype, response.headers["content-type"])
             return False
 
         response = requests.get(self.url, headers=header)
 
-        if response.status_code != requests.codes.ok:
+        if not response.ok:
             return False
 
         self.text = response.text

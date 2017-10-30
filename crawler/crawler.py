@@ -45,19 +45,21 @@ class Crawler(Process):
             url, depth = website.get_url()
             web_page = WebPage(url)
 
-            if web_page.load(self.user_agent):
-                # try to parse page
-                if not web_page.no_cache:
-                    if self.parser.parse(web_page):
-                        self.pages_count += 1
-                        self._logger.debug("Successfully parsed page: {}".format(url))
+            try:
+                if web_page.load(self.user_agent):
+                    # try to parse page
+                    if not web_page.no_cache:
+                        if self.parser.parse(web_page):
+                            self.pages_count += 1
+                            self._logger.debug("Successfully parsed page: {}".format(url))
 
-                # try to extract urls
-                if not web_page.no_follow and depth < self.max_depth:
-                    self.frontier.add_urls(web_page.get_urls(), depth + 1, self.user_agent)
-            else:
-                self._logger.debug("Failed to load url: {}".format(url))
-
+                    # try to extract urls
+                    if not web_page.no_follow and depth < self.max_depth:
+                        self.frontier.add_urls(web_page.get_urls(), depth + 1, self.user_agent)
+                else:
+                    self._logger.debug("Failed to load url: {}".format(url))
+            except Exception as e:
+                self._logger.error("An exception occured while loading or processing url: {}".format(url), e, exc_info=1)
             # update time
             website.last_time = utils.current_time_ms()
 

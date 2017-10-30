@@ -29,7 +29,7 @@ class Website:
 
     def crawl_delay(self, user_agent: str) -> int:
         delay = self._robot_parser.crawl_delay(user_agent)
-        return delay * 1000 if delay is not None else None
+        return delay * 300 if delay is not None else None
 
     def is_empty(self) -> bool:
         return len(self._queue) == 0
