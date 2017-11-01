@@ -14,13 +14,15 @@ class Crawler(Process):
                  parser: Parser,
                  max_pages_count: int = 1000,
                  max_depth: int = 10,
-                 delay: int = 30):
+                 delay_ms: int = 30,
+                 frontier_dump_delay_s: int = 10 * 60):
         self.user_agent = user_agent
         self.frontier = frontier
         self.parser = parser
         self.max_pages_count = max_pages_count
         self.max_depth = max_depth
-        self.delay = delay
+        self.delay_ms = delay_ms
+        self.frontier_dump_delay_s = frontier_dump_delay_s
 
         self.pages_count = 0
 
@@ -29,16 +31,22 @@ class Crawler(Process):
 
     def run(self):
         start_time = utils.current_time_ms()
+        last_dump_time = utils.current_time_ms()
+
         self._logger.info("Start downloading pages...")
 
         while not self.frontier.is_empty() and self.pages_count < self.max_pages_count:
             website = self.frontier.get_website()
             time_ms = utils.current_time_ms()
 
+            if time_ms > last_dump_time + self.frontier_dump_delay_s * 1000:
+                self.frontier.dump()
+                last_dump_time = time_ms
+
             # skip the iteration if the waiting time has not passed yet
             crawler_delay = website.crawl_delay(self.user_agent)
             if not crawler_delay:
-                crawler_delay = self.delay
+                crawler_delay = self.delay_ms
             if website.last_time + crawler_delay > time_ms:
                 continue
 
@@ -59,7 +67,7 @@ class Crawler(Process):
                 else:
                     self._logger.debug("Failed to load url: {}".format(url))
             except Exception as e:
-                self._logger.error("An exception occured while loading or processing url: {}".format(url), e, exc_info=1)
+                self._logger.exception("An exception occured while loading or processing url: {}".format(url))
             # update time
             website.last_time = utils.current_time_ms()
 

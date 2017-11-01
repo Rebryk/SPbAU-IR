@@ -2,6 +2,9 @@ from collections import deque
 from urllib.parse import urlparse
 
 from .website import Website
+import pickle
+from datetime import datetime
+import glob
 
 
 def parse_url(url):
@@ -10,10 +13,11 @@ def parse_url(url):
 
 
 class Frontier:
-    def __init__(self, urls: {str}, allowed: {str}):
+    def __init__(self, urls: {str}, allowed: {str}, dump_prefix: str):
         self.allowed = list(map(lambda url: parse_url(url)[1], allowed))
         self._websites = {}
         self._queue = deque()
+        self._dump_prefix = dump_prefix
 
         for url in urls:
             scheme, hostname = parse_url(url)
@@ -48,6 +52,20 @@ class Frontier:
     def add_urls(self, urls: {str}, depth: int, user_agent: str):
         for url in urls:
             self.add_url(url, depth, user_agent)
+
+    @staticmethod
+    def restore_from_dump(dump_prefix: str):
+        dumps = glob.glob("{}*.pickle".format(dump_prefix))
+        if not dumps:
+            return None
+        latest_dump_name = max(dumps)
+        with open(latest_dump_name, 'rb') as dump:
+            return pickle.load(dump)
+
+    def dump(self):
+        dump_name = datetime.now().strftime("{}_%Y_%m_%d_%H_%M_%S.pickle".format(self._dump_prefix))
+        with open(dump_name, 'wb') as dump:
+            dump.write(pickle.dumps(self))
 
     def _get_website(self, scheme: str, hostname: str) -> Website:
         website = self._websites.get(hostname)
