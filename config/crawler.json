@@ -1,7 +1,7 @@
 {
   "user_agent": "SPbAU-IR-Bot",
   "max_pages_count": 100000,
-  "max_depth": 5,
+  "max_depth": 10,
   "delay_ms": 50,
-  "frontier_dump_delay_s": 60
+  "frontier_dump_delay_s": 600
 }

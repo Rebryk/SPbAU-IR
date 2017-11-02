@@ -1,5 +1,6 @@
 import glob
 import gzip
+import os
 import pickle
 from datetime import datetime
 
@@ -12,15 +13,15 @@ class Index:
     def __call__(self, index: dict):
         self.index = index
 
-    def save(self):
-        dump_name = datetime.now().strftime("{}_%Y_%m_%d_%H_%M_%S.pickle.gz".format(self.name))
+    def save(self, folder: str):
+        dump_name = datetime.now().strftime("{}_%Y_%m_%d_%H_%M_%S.pickle.gz".format(os.path.join(folder, self.name)))
 
         with gzip.open(dump_name, "wb") as dump:
             dump.write(pickle.dumps(self))
 
     @staticmethod
-    def load(name: str):
-        dumps = glob.glob("{}*.pickle.gz".format(name))
+    def load(folder: str, name: str):
+        dumps = glob.glob("{}*.pickle.gz".format(os.path.join(folder, name)))
 
         if not dumps:
             return None

@@ -3,3 +3,5 @@ psycopg2==2.7.3.1
 beautifulsoup4==4.6.0
 requests==2.18.4
 urltools==0.3.2
+nltk==3.2.4
+python-dateutil==2.6.1

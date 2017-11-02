@@ -59,12 +59,12 @@ class Frontier:
         if not dumps:
             return None
         latest_dump_name = max(dumps)
-        with open(latest_dump_name, 'rb') as dump:
+        with open(latest_dump_name, "rb") as dump:
             return pickle.load(dump)
 
     def dump(self):
         dump_name = datetime.now().strftime("{}_%Y_%m_%d_%H_%M_%S.pickle".format(self._dump_prefix))
-        with open(dump_name, 'wb') as dump:
+        with open(dump_name, "wb") as dump:
             dump.write(pickle.dumps(self))
 
     def _get_website(self, scheme: str, hostname: str) -> Website:

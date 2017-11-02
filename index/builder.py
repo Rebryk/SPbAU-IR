@@ -1,23 +1,20 @@
-from collections import namedtuple
 from functools import reduce
 from multiprocessing import Pool, cpu_count
 
 from .index import Index
 
-Document = namedtuple("Document", ["id", "text"])
-
 
 class IndexBuilder:
-    def __init__(self, processes: int):
-        self._processes = processes or cpu_count()
+    def __init__(self, processes: int = cpu_count()):
+        self._processes = processes
         self._pool = Pool(processes=self._processes)
 
-    def build(self, index: Index, documents):
-        indices = self._pool.map(index.build, self._partition(documents))
+    def build(self, index: Index, ids: [int]):
+        indices = self._pool.map(index.build, self._partition(ids))
         return index(reduce(index.merge, indices, dict()))
 
-    @staticmethod
-    def _partition(documents):
+    def _partition(self, ids: [int]):
         """ Group documents by hash"""
-        # TODO: implement
-        return [documents]
+
+        for i in range(self._processes):
+            yield [id for id in ids if id % self._processes == i]

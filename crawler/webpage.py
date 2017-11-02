@@ -4,6 +4,7 @@ from urllib.parse import urlparse, urljoin
 import requests
 from bs4 import BeautifulSoup
 from urltools import normalize
+from hashlib import md5
 
 
 class RobotsTag:
@@ -34,25 +35,19 @@ class WebPage:
         self.text = None
         self.headers = None
         self._page = None
-        self.page_encoding = None
+        self.encoding = None
         self._meta_robots_tags = None
 
     def load(self, user_agent: str) -> bool:
         header = {"user-agent": user_agent}
         response = requests.head(self.url, headers=header)
 
-        if not response.ok or "content-type" not in response.headers:
-            return False
-
-        # ignore extra pages
-        mimetype, _ = cgi.parse_header(response.headers["content-type"])
-        if mimetype not in WebPage.MIME_TYPES:
-            print(mimetype, response.headers["content-type"])
+        if not WebPage._check_response(response):
             return False
 
         response = requests.get(self.url, headers=header)
 
-        if not response.ok:
+        if not WebPage._check_response(response):
             return False
 
         self.text = response.text
@@ -82,8 +77,47 @@ class WebPage:
         return self.none or RobotsTag.NO_ARCHIVE in self._meta_robots_tags
 
     @property
+    def raw_text(self):
+        return self.text.encode(self.encoding)
+
+    @property
+    def page_hash(self):
+        m = md5()
+        m.update(self.raw_text)
+        return m.hexdigest()
+
+    @property
     def no_cache(self):
         return self.none or RobotsTag.NO_CACHE in self._meta_robots_tags
+
+    @staticmethod
+    def from_disk(url: str, file_path: str):
+        with open(file_path, "r") as file:
+            text = file.read()
+
+        web_page = WebPage(url)
+        web_page.text = text
+        web_page.encoding = "UTF-8"
+
+        return web_page
+
+    @staticmethod
+    def _check_response(response: requests.Response) -> bool:
+
+        if response.is_redirect:
+            return True
+
+        if not response.ok or "content-type" not in response.headers:
+            print(response.url, response.status_code, response.headers)
+            return False
+
+        # ignore extra pages
+        mime_type, _ = cgi.parse_header(response.headers["content-type"])
+        if mime_type not in WebPage.MIME_TYPES:
+            print(response.url, mime_type)
+            return False
+
+        return True
 
     @staticmethod
     def _parse_meta_robots_tags(page: BeautifulSoup) -> {str}:

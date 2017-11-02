@@ -2,6 +2,13 @@
 
 The crawler for the article retrieval system.
 
+## Installation
+Python 3 is required
+
+```
+pip3 install -r requirements.txt
+python -m nltk.downloader popular
+```
 ## Structure 
 
 ### WebPage

@@ -1,9 +1,13 @@
+import logging
 from collections import namedtuple
 from operator import attrgetter
 
+from pony.orm import db_session
+
+from data import Article
 from .index import Index
 
-InvertedIndexEntry = namedtuple("InvertedIndexEntry", ["document", "count", "positions"])
+InvertedIndexEntry = namedtuple("InvertedIndexEntry", ["article", "count", "positions"])
 
 
 class InvertedIndex(Index):
@@ -13,17 +17,24 @@ class InvertedIndex(Index):
         super().__init__(InvertedIndex.NAME)
 
     @staticmethod
-    def build(documents) -> dict:
+    def build(articles: [int]) -> dict:
         """ Build an index for the given documents """
 
         index = dict()
 
-        for document in documents:
-            for token in set(document.text):
-                if token not in index:
-                    index[token] = []
+        with db_session:
+            for article_id in articles:
+                article = Article[article_id]
 
-                index[token].append(InvertedIndex._build_entry(document, token))
+                # TODO: use gzip.open
+                with open(article.processed_abstract_path, "r") as abstract:
+                    text = " ".join(abstract.readlines()).split()
+
+                for token in set(text):
+                    if token not in index:
+                        index[token] = []
+
+                    index[token].append(InvertedIndex._build_entry(article, text, token))
 
         return index
 
@@ -45,8 +56,8 @@ class InvertedIndex(Index):
         return [values[0]] + [values[i] - values[i - 1] for i in range(1, len(values))]
 
     @staticmethod
-    def _build_entry(document, token: str) -> InvertedIndexEntry:
+    def _build_entry(article: Article, text: [str], token: str) -> InvertedIndexEntry:
         """ Build an inverted index entry for the given text and token """
 
-        positions = InvertedIndex._gap_values([index for index, word in enumerate(document.text) if word == token])
-        return InvertedIndexEntry(document.id, len(positions), positions)
+        positions = InvertedIndex._gap_values([index for index, word in enumerate(text) if word == token])
+        return InvertedIndexEntry(article.id, len(positions), positions)
