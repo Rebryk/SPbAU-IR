@@ -65,7 +65,7 @@ class Crawler(Process):
                     if not web_page.no_follow and depth < self.max_depth:
                         self.frontier.add_urls(web_page.get_urls(), depth + 1, self.user_agent)
                 else:
-                    self._logger.debug("Failed to load url: {}".format(url))
+                    self._logger.warning("Failed to load url: {}".format(url))
             except Exception as e:
                 self._logger.exception("An exception occured while loading or processing url: {}".format(url))
             # update time
