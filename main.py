@@ -1,11 +1,17 @@
 import json
 
-from crawler import Frontier, Crawler
-from parser import SaverParser
+from crawler import Frontier, Crawler, WebPage
+from parser import SaverParser, ArxivParser
 from urllib.parse import urlparse
+from text_processing import TextProcessor
+from data import Document
+from pony.orm import db_session, commit
+
+import argparse
 import os
 
-if __name__ == "__main__":
+
+def start_crawlers():
     with open("config/crawler.json") as file:
         # read configuration file
         config = json.load(file)
@@ -32,3 +38,29 @@ if __name__ == "__main__":
                           delay_ms=int(config["delay_ms"]),
                           frontier_dump_delay_s=config["frontier_dump_delay_s"])
         crawler.start()
+
+
+@db_session
+def parse_documents():
+    arxivParser = ArxivParser(TextProcessor())
+
+    for document in Document.select(lambda doc: not doc.is_processed):
+        if "arxiv.org" in urlparse(document.url)[1]:
+            parsed = arxivParser.parse(WebPage.from_disk(document.url, document.file_path))
+            if parsed:
+                print("Article: " + document.url)
+            else:
+                print(document.url)
+            document.is_processed = True
+            commit()
+
+
+parser = argparse.ArgumentParser(description="Information Retrieval")
+parser.add_argument('mode', choices=['crawler', 'parser'])
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+    if args.mode == 'crawler':
+        start_crawlers()
+    elif args.mode == 'parser':
+        parse_documents()

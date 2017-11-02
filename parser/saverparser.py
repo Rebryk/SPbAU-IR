@@ -3,7 +3,6 @@ import logging
 from .parser import Parser
 from pony.orm import db_session
 from crawler.webpage import WebPage
-from hashlib import md5
 from data.document import Document
 import email.utils
 import os
@@ -19,11 +18,8 @@ class SaverParser(Parser):
 
     @db_session
     def parse(self, web_page: WebPage) -> bool:
-        raw_text = web_page.text.encode(web_page.encoding)
-
-        m = md5()
-        m.update(raw_text)
-        page_hash = m.hexdigest()
+        raw_text = web_page.raw_text
+        page_hash = web_page.page_hash
 
         page_date = email.utils.parsedate_to_datetime(
             web_page.headers['last-modified']

@@ -4,6 +4,7 @@ from urllib.parse import urlparse, urljoin
 import requests
 from bs4 import BeautifulSoup
 from urltools import normalize
+from hashlib import md5
 
 
 class RobotsTag:
@@ -76,6 +77,16 @@ class WebPage:
         return self.none or RobotsTag.NO_ARCHIVE in self._meta_robots_tags
 
     @property
+    def raw_text(self):
+        return self.text.encode(self.encoding)
+
+    @property
+    def page_hash(self):
+        m = md5()
+        m.update(self.raw_text)
+        return m.hexdigest()
+
+    @property
     def no_cache(self):
         return self.none or RobotsTag.NO_CACHE in self._meta_robots_tags
 
@@ -105,3 +116,12 @@ class WebPage:
             meta_robots_tags |= {robots_tag for robots_tag in tag.get("content").replace(" ", "").split(",")}
 
         return meta_robots_tags
+
+    @staticmethod
+    def from_disk(url: str, file_path: str):
+        with open(file_path, "r") as file:
+            text = file.read()
+        web_page = WebPage(url)
+        web_page.text = text
+        web_page.encoding = "UTF-8"
+        return web_page
