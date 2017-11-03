@@ -75,9 +75,9 @@ def build_index():
         return
 
     logging.debug("Building index...")
-    documents = select(article.id for article in Article)[:]
+    articles = select(article.id for article in Article)[:]
     index = InvertedIndex()
-    IndexBuilder().build(index, documents)
+    IndexBuilder().build(index, articles)
 
     logging.debug("Saving index...")
     index.save(INDEX_FOLDER)

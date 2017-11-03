@@ -2,53 +2,82 @@
 
 We are developing a system for searching scientific articles.
 
-The data for our search engine will be collected from online libraries like \url{arxiv.org} 
+The data for our search engine is collected from online libraries like \url{arxiv.org} 
 and from publishers that have information about their articles available online (like \url{springer.com}).
 
-Firstly, we'll crawl a large number of pages from these sites and store them for future processing.
+% a large number of pages
+Firstly, we crawled \texttt{20k} pages from these sources and saved them for future processing.
 
-Then, we'll filter irrelevant pages (those that doesn't contain an article description) and process the rest.
-For each relevant page we'll extract it's title, abstract, list of authors and probably some meta information like date of publishing.
-Also, we'll store a link for a PDF version of article, if available.
+Then, we filtered irrelevant pages (those that doesn't contain an article description) and processed the rest of the documents.
+For each relevant page, we extracted article's title, abstract, list of authors, date of publishing, etc.
+Also, we store a link for a PDF version of an article, if it's available.
 
-After that, we'll implement a search engine over these articles \textbf{to be discussed later}.
+After that, we are going to implement a search engine for searching among these articles. \textbf{We will discuss it later}.
 
-The key feature of our service would be creating some kind of graph over authors/articles and their references to each other \textbf{to be specified later} 
+The key feature of our service will be creating some kind of graph over authors/articles and their references to each other. \textbf{We will discuss it later}.
 
 \section{System design}
-We use \texttt{Python 3} for development and \texttt{Postgresql} for database.
+We use \texttt{Python 3}  for development and \texttt{PostgreSQL} database.
 
-Documents are stored in a filesystem and their metadata and (in future) results of a document processing are stored in database
-
+Articles, processed articles' abstracts and inverted index are stored in a filesystem.
+Articles' metadata and PAF are stored in the database.
 
 
 \section{Data acquisition}
-For data acquisition we implemented a web crawler. The key details of out implementation are:
+For data acquisition we implemented a web crawler. \\
+The key details of out implementation are:
 \begin{enumerate}
     \item
-        Politeness policy. 
+        \textbf{Politeness policy}
         
         We follow the constraints defined in \texttt{robots.txt}.
-        We do not visit excluded pages, do not store page if there is a \texttt{noindex} meta tag, and of course do not spam a website with a lot of queries.
-        Even if a delay is not specified in \texttt{robots.txt} we have a default one.
+        We do not visit excluded pages, do not store page if there is a \texttt{noindex} meta tag, and of course, do not spam a website with a lot of queries.
+        Even if a delay is not specified in \texttt{robots.txt} we use value defined in the configuration file (default \texttt{delay} is \texttt{50ms}).
 
     \item
-        Distributed crawling. 
+        \textbf{Distributed crawling}
         
         The problem with Python's multithreading is that only one thread can be run at a time because of \texttt{GIL}, so we use multiprocessing instead.
-        Each crawler runs in its own process and several crawlers can be run simultaneously. 
+        Each crawler runs in its own process and several crawlers can be run simultaneously.
 
-        To prevent a page being downloaded by several processes, each crawler has its own set of \texttt{allowed hosts}.
-        This is suitable for us as 
-        \begin{enumerate}
+		\pagebreak
+		Crawlers do not exchange URLs. This solution is suitable in our case because:
+		\begin{enumerate}
             \item
-                There are not so many data sources with scientific articles so we can just list them
+                There are not so many data sources with scientific articles so we can just list them.
             \item
-                We aren't interested in links leading to a different domain as most likely that domain will not contain any relevant documents
+            	We are not interested in links leading to another domain, because, most likely, this domain will not contain any relevant documents.
         \end{enumerate}
+		\
+
+		Also it gives us a few advantages:
+		\begin{enumerate}
+			\item Simplicity of implementation. It is more difficult to make a mistake.
+			\item Easy to run on different computers, because communication is not needed.
+			\item Each crawler has its own set of allowed hosts (we define these hosts in the configuration file). It prevents the same page to be downloaded several times.
+		\end{enumerate}
 
 \end{enumerate}
 
 We store each HTML page we crawled in a filesystem and put some page's metadata 
 (like its URL, hash of page content, date of last page modify) in database. Duplicated pages (with equal hashes) are ignored.
 
+\section{Data processing and storage}
+
+\subsection{Data processing}
+\textbf{\color{red}TODO}
+
+\subsection{Indexing}
+\subsubsection{Page attribute file}
+For each article, we store its attributes: the title, the path to file with abstract, the path to file with processed abstract, the number of words, the link to pdf and so on.
+
+This information we store in the database.
+
+\subsubsection{Inverted index}
+We built an inverted index. For each word, we store a list with documents that contain this word. And for each document, we store the number of occurrences of this word in the document with positions of these occurrences.
+
+The document lists are sorted by the number of occurrences. Also, we use gap values to store positions of these occurrences for better compression.
+
+This index can be build by several processes simultaneously. We split all articles by their \texttt{id} into groups, and each group is processed by a separate process. After that, all indices are merged into one index.
+
+We store this index in a filesystem. We use \texttt{gzip} for compression.
