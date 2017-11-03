@@ -64,8 +64,24 @@ We store each HTML page we crawled in a filesystem and put some page's metadata
 
 \section{Data processing and storage}
 
-\subsection{Data processing}
-\textbf{\color{red}TODO}
+As we have a few data sources and we need a specific information extracted from crawled documents
+(like article's title, abstract and list of authors), we implemented a separate data processor for each data source.
+
+Data processing is done as follows:
+\begin{enumerate}
+
+\item Firstly, we filter out pages that doesn't contain an article.
+
+\item Then, we extract relevant parts of remained pages and transform it to a plaintext, removing all the HTML tags.
+
+\item After that, article's abstract is processed for future indexing, stemming its words and removing stopwords and punctiation
+
+\end{enumerate}
+
+Raw and processed article's abstract are stored in the filesystem,
+other information (like title, list of authors, link to PDF if available) is put into database
+
+We use \texttt{BeautifulSoup} for webpage parsing, and \texttt{NLTK} for abstract processing.
 
 \subsection{Indexing}
 \subsubsection{Page attribute file}
