@@ -2,7 +2,7 @@ import json
 import logging
 
 from crawler import Frontier, Crawler, WebPage
-from parser import SaverParser, ArxivParser
+from parser import SaverParser, ArxivParser, SpringerParser
 from urllib.parse import urlparse
 from text_processing import TextProcessor
 from data import Document, Article
@@ -52,15 +52,22 @@ def start_crawlers():
 
 @db_session
 def parse_documents():
-    arxivParser = ArxivParser(TextProcessor())
-
+    arxiv_parser = ArxivParser(TextProcessor())
+    springer_parser = SpringerParser(TextProcessor())
     for document in Document.select(lambda doc: not doc.is_processed):
         if "arxiv.org" in urlparse(document.url)[1]:
-            parsed = arxivParser.parse(WebPage.from_disk(document.url, document.file_path))
-            document.is_processed = True
-            commit()
+            cur_parser = arxiv_parser
+        elif "springer.com" in urlparse(document.url)[1]:
+            cur_parser = springer_parser
+        else:
+            print(document.url)
+            continue
+        page = WebPage.from_disk(document.url, document.file_path)
+        parsed = cur_parser.parse(page)
+        document.is_processed = True
+        commit()
 
-            logger.debug(("Article: {}" if parsed else "{}").format(document.url))
+        print(("Article: {}" if parsed else "{}").format(document.url))
 
 
 @db_session

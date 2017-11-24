@@ -1,7 +1,8 @@
 {
   "hosts": [
     "https://arxiv.org/",
-    "http://www.springer.com"
+    "https://www.springer.com",
+    "https://link.springer.com"
   ]
 
 }

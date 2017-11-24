@@ -16,7 +16,6 @@ class ArxivParser(ArticleParser):
     def __init__(self, text_processor: TextProcessor):
         super().__init__(text_processor)
         self._logger = logging.getLogger(self.__class__.__name__)
-        self._text_processor = text_processor
 
     @db_session
     def parse(self, web_page: WebPage) -> bool:
@@ -34,7 +33,7 @@ class ArxivParser(ArticleParser):
             link = link_to_pdf_relative.get("href")
             link_to_pdf = urllib.parse.urljoin(web_page.url, link)
         else:
-            link_to_pdf = None
+            link_to_pdf = ''
 
         title = ArxivParser._get_clean_text(
             abstract_section.find("h1", {"class": "title mathjax"})
@@ -60,6 +59,8 @@ class ArxivParser(ArticleParser):
                                    authors=authors,
                                    date=date,
                                    article_hash=web_page.page_hash)
+
+        return True
 
     @staticmethod
     def _get_clean_text(soup: BeautifulSoup) -> str:
