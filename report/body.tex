@@ -97,3 +97,27 @@ The document lists are sorted by the number of occurrences. Also, we use gap val
 This index can be build by several processes simultaneously. We split all articles by their \texttt{id} into groups, and each group is processed by a separate process. After that, all indices are merged into one index.
 
 We store this index in a filesystem. We use \texttt{gzip} for compression.
+
+\section{Ranking}
+We implemented TF-IDF with cosine similarity for ranking.
+
+We used inverted index constructed previously to calculate TF-IDF. 
+
+To improve search perfomance, for each document its vector is constructed once and then stored in memory.
+Also, to decrease memory usage and improve search perfomance even further, vectors are stored in a sparse form.
+
+
+\section{Features}
+\subsection{Article similarity graph}
+We want to plot aricles as points on 2D plane in a way that articles that are ``similar'' would be close to each other as points on plane.
+
+To measure ``similarity'' of articles we're going to use doc2vec. 
+Unfortunatelly, training doc2vec takes some time, so for now we implemented more simple approach.
+We use pretrained word2vec to get a vector for each term in an article and then use mean value of these vectors as a document's vector.
+
+Later, we're going to compare this two approaches (but most likely, trained doc2vec would be better)
+
+\subsection{Authors graph}
+The same feature will be implemented for authors. 
+
+For each author we'll calculate mean vector of his articles and then visualize it the in same way as for articles.
