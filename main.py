@@ -90,8 +90,13 @@ def build_index():
     index.save(INDEX_FOLDER)
 
 
+def run_web():
+    from web import app
+    app.run(host="127.0.0.1")
+
+
 parser = argparse.ArgumentParser(description="Information Retrieval")
-parser.add_argument("mode", choices=["crawler", "parser", "index"])
+parser.add_argument("mode", choices=["crawler", "parser", "index", "web"])
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -101,3 +106,5 @@ if __name__ == "__main__":
         parse_documents()
     elif args.mode == "index":
         build_index()
+    elif args.mode == "web":
+        run_web()

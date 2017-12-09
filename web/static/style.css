@@ -1,0 +1,110 @@
+#header {
+    padding-left: 20px;
+}
+
+#query-box {
+    max-width: 600px;
+}
+
+#results-header {
+    padding-left: 20px;
+    font-size: 30px;
+}
+
+.document {
+    padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    width: 620px;
+
+    border-width: 1px;
+    border-bottom-width: 1px;
+    border-bottom-color: gray;
+    border-bottom-style: solid;
+}
+
+div.document:hover {
+    background-color: #f2f7ff;
+}
+
+.document-good {
+    margin-right: 10px;
+}
+
+.document-title {
+    font-size: 22px;
+}
+
+.document-author {
+    font-size: 17px;
+}
+
+.document-date {
+    color: grey;
+    font-size: 14px;
+}
+
+.document-abstract {
+    font-size: 15px;
+    max-width: 620px;
+}
+
+div.document a.document-title {
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+    max-width: 620px;
+}
+
+div.document-abstract p.collapse[aria-expanded="false"] {
+    display: block;
+    height: 40px !important;
+    overflow: hidden;
+}
+
+div.document-abstract p.collapsing[aria-expanded="false"] {
+    height: 40px !important;
+}
+
+div.document-abstract a.collapsed:after  {
+    content: '+ Show More';
+}
+
+div.document-abstract a:not(.collapsed):after {
+    content: '- Show Less';
+}
+
+
+.btn-success {
+    color: black;
+    background-color: white;
+    border-color: black;
+}
+
+.btn-success:hover {
+    color: #fff;
+    background-color: #449d44;
+    border-color: #398439;
+}
+
+.btn-success:active:hover {
+    color: #fff;
+    background-color: #398439;
+    border-color: #255625;
+}
+
+#from-date {
+    float: left;
+    max-width: 298px;
+    margin-top: 4px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+
+#to-date {
+    float: left;
+    margin-top: 4px;
+    max-width: 298px;
+    margin-bottom: 4px;
+}

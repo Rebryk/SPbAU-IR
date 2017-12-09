@@ -5,3 +5,5 @@ requests==2.18.4
 urltools==0.3.2
 nltk==3.2.4
 python-dateutil==2.6.1
+flask
+flask-bootstrap
