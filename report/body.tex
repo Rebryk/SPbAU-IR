@@ -97,3 +97,16 @@ The document lists are sorted by the number of occurrences. Also, we use gap val
 This index can be build by several processes simultaneously. We split all articles by their \texttt{id} into groups, and each group is processed by a separate process. After that, all indices are merged into one index.
 
 We store this index in a filesystem. We use \texttt{gzip} for compression.
+
+\subsection{Interface}
+We use \texttt{Flask}, \texttt{Angular} and \texttt{Bootstrap} to visualize search results.
+
+\subsubsection{Additional filters}
+Users have the opportunity to search articles not only by content, but also they can specify the date range. In this case, the system shows only that articles which were published in the given date range.
+
+\subsubsection{Articles map}
+We project all articles into 2-dimensional space and draw this space. It's an additional opportunity to discover similar articles.
+
+\subsubsection{Feedback}
+We decided to add an additional button for each retrieved document. Users can use this button to mark that the given document is relevant. This feature is a tool for evaluating the performance of our system on the next project stage.
+
