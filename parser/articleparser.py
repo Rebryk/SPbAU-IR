@@ -38,7 +38,7 @@ class ArticleParser(Parser):
         with open(raw_abstract_path, "w") as file:
             file.write(raw_abstract)
 
-        processed_abstract = self._text_processor.process_abstract(raw_abstract)
+        processed_abstract = self._text_processor.process(raw_abstract)
         processed_abstract_path = os.path.join(self._path_to_processed_abstract, article_hash)
 
         with open(processed_abstract_path, "w") as file:

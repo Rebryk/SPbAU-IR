@@ -6,6 +6,6 @@ class TextProcessor:
     def __init__(self):
         self._stemmer = EnglishStemmer()
 
-    def process_abstract(self, text: str) -> [str]:
+    def process(self, text: str) -> [str]:
         words = filter(lambda word: word not in stopwords.words("english") and word.isalpha(), word_tokenize(text))
         return [self._stemmer.stem(word) for word in words]
