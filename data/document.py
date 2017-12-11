@@ -1,6 +1,8 @@
-from . import db
-from pony import orm
 import datetime
+
+from pony import orm
+
+from . import db
 
 
 class Document(db.Entity):

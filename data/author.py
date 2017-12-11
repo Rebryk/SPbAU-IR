@@ -1,6 +1,6 @@
-from . import db
-
 from pony import orm
+
+from . import db
 
 
 class Author(db.Entity):
