@@ -16,12 +16,18 @@
           $http.post('/search', {"q": query, "from": fromDate, "to": toDate}).
             success(function(data, status, headers, config) {
               $scope.results = data;
-              $log.log(data);
+              // $log.log(data);
             }).
             error(function(error) {
               $log.log(error);
             });
         };
+
+//        $scope.like = function() {
+//            $log.log("it works");
+//            // query_id, rank
+//            // $http.post('/like', {'query_id': query_id, 'rank': rank});
+//        }
       }
   ]);
 

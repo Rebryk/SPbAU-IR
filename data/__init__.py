@@ -9,7 +9,7 @@ db = orm.Database()
 from .document import Document
 from .author import Author
 from .article import Article
-from .query import Query
+from .query import Query, Like
 
 with open("config/db.json") as f:
     config = json.load(f)
@@ -21,4 +21,4 @@ with open("config/db.json") as f:
 
     db.generate_mapping(create_tables=True)
 
-__all__ = ("Document", "Article", "Author", "Query")
+__all__ = ("Document", "Article", "Author", "Query", "Like")

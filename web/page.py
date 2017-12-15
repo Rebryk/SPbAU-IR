@@ -6,14 +6,15 @@ from datetime import datetime
 from flask import render_template, request, jsonify
 from pony.orm import select, db_session, commit
 
-from data import Article, Query
+from data import Article, Query, Like
 from index import InvertedIndex
 from ranker import TfIdf, AbstractAndArticle
 from text_processing import TextProcessor
 from web import app
 
 INDEX_FOLDER = "index"
-TOP_COUNT = 100
+TOP_COUNT = 20
+TOP_COUNT_RESULT = 5
 
 ranker = None
 logger = logging.getLogger(__name__)
@@ -57,9 +58,23 @@ def setup_ranker():
     ranker = TfIdf(index, text_processor, docs)
 
 
+@app.route("/like", methods=['POST'])
+@db_session
+def like_document():
+    data = json.loads(request.data.decode())
+
+    query_id = int(data["query_id"])
+    rank = int(data["rank"])
+    relevance = int(data["relevance"])
+
+    Like(query_id=query_id, rank=rank, relevance=relevance)
+    return "", 200
+
+
 @app.route("/")
 def search_page():
     return render_template("index.html")
+
 
 
 @app.route('/search', methods=['POST'])
@@ -102,6 +117,7 @@ def get_counts():
             "abstract": abstract
         })
 
+    results = results[:TOP_COUNT_RESULT]
     query.results_count = len(results)
 
     return jsonify(results)

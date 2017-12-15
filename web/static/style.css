@@ -28,6 +28,12 @@ div.document:hover {
     background-color: #f2f7ff;
 }
 
+.document-relevance {
+    font-size: 16px;
+    margin-right: 5px;
+    margin-top: -2px;
+}
+
 .document-good {
     margin-right: 10px;
 }

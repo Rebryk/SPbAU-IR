@@ -27,7 +27,7 @@ class TfIdf(Ranker):
             sum = 0
             for term in query_vec:
                 sum += query_vec[term] * doc_vec.get(term, 0)
-            return sum / query_norm / doc_norm
+            return sum / (1 if abs(query_norm) < 1e-5 else query_norm) / (1 if abs(doc_norm) < 1e-5 else doc_norm)
 
         return list(map(lambda t: t[1], sorted(self.vec_and_document, key=cos_dist, reverse=True)[:top_count]))
 
