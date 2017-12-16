@@ -111,6 +111,8 @@ Also, to decrease memory usage and improve search perfomance even further, vecto
 \subsection{Article similarity graph}
 We want to plot aricles as points on 2D plane in a way that articles that are ``similar'' would be close to each other as points on plane.
 
+One has an opportunity to see the given documents on this map and click on neighbor articles to open them. 
+
 To measure ``similarity'' of articles we're going to use doc2vec. 
 Unfortunatelly, training doc2vec takes some time, so for now we implemented more simple approach.
 We use pretrained word2vec to get a vector for each term in an article and then use mean value of these vectors as a document's vector.
@@ -123,13 +125,25 @@ The same feature will be implemented for authors.
 For each author we'll calculate mean vector of his articles and then visualize it the in same way as for articles.
 
 \section{Interface}
-We use \texttt{Flask}, \texttt{Angular} and \texttt{Bootstrap} to visualize search results.
+We use \texttt{Flask}, \texttt{Angular} and \texttt{Bootstrap} to visualize search results (fig. 1).
 
 \subsubsection{Additional filters}
-Users have the opportunity to search articles not only by content, but also they can specify the date range. In this case, the system shows only that articles which were published in the given date range.
+Users have an opportunity to search articles not only by content, but also they can specify the date range. In this case, the system shows only that articles which were published in the given date range.
 
 \subsubsection{Articles map}
-We project all articles into 2-dimensional space and draw this space. It's an additional opportunity to discover similar articles.
+We project all articles into 2-dimensional space and draw this space. On the map, one can see the extracted documents and click on neighbor articles to open them. It's an additional opportunity to discover similar articles.  
 
 \subsubsection{Feedback}
-We decided to add an additional button for each retrieved document. Users can use this button to mark that the given document is relevant. This feature is a tool for evaluating the performance of our system on the next project stage.
+We decided to add an additional bar with buttons for each retrieved document. Users can use these buttons to mark how relevant the given document is. This feature is a tool for evaluating the performance of our system on the next project stage (fig. 2).
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{screenshot_1.png}
+  \caption{Search page}
+  \label{fig:search_page}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{screenshot_2.png}
+  \caption{Feedback tool}
+  \label{fig:search_page}
+\end{figure}

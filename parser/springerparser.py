@@ -45,7 +45,7 @@ class SpringerParser(ArticleParser):
                 .strip().split(',')
         else:
             print('Cannot parse: {}'.format(authors_text))
-            assert False
+            return False
 
         authors = []
         for i in range(0, len(author_tokens) - 1, 2):
