@@ -9,6 +9,7 @@ from data import Document, Article
 from pony.orm import db_session, commit, select
 from index import InvertedIndex, IndexBuilder
 from ranker import TfIdf, AbstractAndArticle
+from doc2vec import Doc2VecModel
 import argparse
 import os
 
@@ -16,6 +17,7 @@ INDEX_FOLDER = "index"
 CRAWLER_CONFIG = "config/crawler.json"
 HOSTS_CONFIG = "config/hosts.json"
 DUMP_FOLDER = "dumps"
+MODEL_PATH = "doc2vec/model.dump"
 
 logger = logging.getLogger(__name__)
 
@@ -97,8 +99,13 @@ def run_web():
     app.run(host="127.0.0.1")
 
 
-parser = argparse.ArgumentParser(description="Information Retrieval")
-parser.add_argument("mode", choices=["crawler", "parser", "index", "web"])
+@db_session
+def train_doc2vec():
+    articles = select(article for article in Article)[:]
+    model = Doc2VecModel(10)
+    model.fit(articles, 50)
+    model.save_model(MODEL_PATH)
+
 
 @db_session
 def run_rank():
@@ -125,7 +132,7 @@ def _read_file(path):
 
 
 parser = argparse.ArgumentParser(description="Information Retrieval")
-parser.add_argument("mode", choices=["crawler", "parser", "index", "rank", "web"])
+parser.add_argument("mode", choices=["crawler", "parser", "index", "rank", "web", "doc2vec"])
 
 
 if __name__ == "__main__":
@@ -140,3 +147,5 @@ if __name__ == "__main__":
         run_web()
     elif args.mode == "rank":
         run_rank()
+    elif args.mode == "doc2vec":
+        train_doc2vec()
