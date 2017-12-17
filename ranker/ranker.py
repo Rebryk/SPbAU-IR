@@ -1,4 +1,3 @@
-from data import Document
 from collections import namedtuple
 
 
@@ -9,5 +8,6 @@ class Ranker:
     def __init__(self):
         pass
 
-    def rank(self, query: str, top_count: int) -> [AbstractAndArticle]:
+    # returns list of ids of articles
+    def rank(self, query: str, top_count: int) -> [int]:
         pass

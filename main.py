@@ -19,6 +19,8 @@ CRAWLER_CONFIG = "config/crawler.json"
 HOSTS_CONFIG = "config/hosts.json"
 DUMP_FOLDER = "dumps"
 MODEL_PATH = "doc2vec/model.dump"
+VECTORS_PER_FILE = 512
+VECTORS_SAVE_FOLDER = "ranker"
 
 logger = logging.getLogger(__name__)
 
@@ -118,13 +120,18 @@ def run_rank():
         article = Article[article_id]
         docs.append(AbstractAndArticle(article, _read_file(article.processed_abstract_path)))
 
-    ranker = TfIdf(index, text_processor, docs)
+    ranker = TfIdf(index,
+                   text_processor,
+                   docs,
+                   vectors_per_file=VECTORS_PER_FILE,
+                   vectors_save_folder=VECTORS_SAVE_FOLDER)
 
     while True:
         query = input("Enter query: ")
-        top = ranker.rank(query, 5)
-        for doc in top:
-            print(doc.article.title, doc.article.document.url)
+        top_ids = ranker.rank(query, 5)
+        for article_id in top_ids:
+            article = Article[article_id]
+            print(article.title, article.document.url)
 
 
 def run_evaluation():

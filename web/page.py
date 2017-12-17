@@ -15,6 +15,8 @@ from web import app
 INDEX_FOLDER = "index"
 TOP_COUNT = 20
 TOP_COUNT_RESULT = 5
+VECTORS_PER_FILE = 512
+VECTORS_SAVE_FOLDER = "ranker"
 
 ranker = None
 logger = logging.getLogger(__name__)
@@ -55,7 +57,7 @@ def setup_ranker():
         article = Article[article_id]
         docs.append(AbstractAndArticle(article, _read_file(article.processed_abstract_path)))
 
-    ranker = TfIdf(index, text_processor, docs)
+    ranker = TfIdf(index, text_processor, docs, VECTORS_PER_FILE, VECTORS_SAVE_FOLDER)
 
 
 @app.route("/like", methods=['POST'])
@@ -89,13 +91,13 @@ def get_counts():
     query = Query(query=query_text)
     commit()
 
-    top = ranker.rank(query_text, TOP_COUNT)
+    top_ids = ranker.rank(query_text, TOP_COUNT)
 
     # Document structure: (query_id, rank, id, title, link, date, author, abstract)
     results = []
 
-    for rank, result in enumerate(top):
-        article = Article[result.article.id]
+    for rank, article_id in enumerate(top_ids):
+        article = Article[article_id]
 
         if not in_date_range(article.date, from_date, to_date):
             continue
