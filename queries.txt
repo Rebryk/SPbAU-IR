@@ -1,0 +1,10 @@
+Gradient descent
+Neural networks
+Clusterization
+Graph theory
+Linear differential equations
+Numerical analysis
+Statistics
+Linear programming
+Object detection
+Music generation

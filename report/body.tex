@@ -147,3 +147,33 @@ We decided to add an additional bar with buttons for each retrieved document. Us
   \caption{Feedback tool}
   \label{fig:search_page}
 \end{figure}
+
+\section{Evaluation}
+
+We asked 8 assessors to help us evaluate our search service. 
+We provided them with 10 search queries listed below in the table and asked them to rank search results on a five-grade scale from 0 (irrelevant) up to 4 (vital document).
+Assessors submitted their responses via search page using evaluation buttions on a search result snippets.
+
+After that, we cleaned up their responses, removing extra queries and filtering out duplicate responses for the same query and document rank.
+We calculated several metrics based on cleaned responses: DCG, MAP, RR. We treated document as a relevant if it had average score no less than 2.
+
+\begin{table}
+    \centering 
+    \begin{tabular}{| l | l | l | l |}
+        \toprule
+        Query & DCG & MAP & RR \\ 
+        \midrule
+        gradient descent & 28.078 & 0.833 & 1.000 \\  
+        neural networks & 39.942 & 0.917 & 1.000 \\  
+        clusterization & 19.989 & 0.639 & 0.500 \\  
+        graph theory & 23.480 & 0.450 & 0.500 \\  
+        linear differential equations & 15.442 & 0.639 & 0.500 \\  
+        numerical analysis & 11.924 & 0.325 & 0.250 \\  
+        statistics & 48.747 & 1.000 & 1.000 \\  
+        linear programming & 11.905 & 0.250 & 0.250 \\  
+        object detection & 26.698 & 0.700 & 1.000 \\  
+        music generation & 24.721 & 0.583 & 0.500 \\  
+        \bottomrule
+    \end{tabular}
+    \caption{Search evaluation}
+\end{table}

@@ -2,6 +2,7 @@ import json
 import logging
 
 from crawler import Frontier, Crawler, WebPage
+from evaluation import Evaluator
 from parser import SaverParser, ArxivParser, SpringerParser
 from urllib.parse import urlparse
 from text_processing import TextProcessor
@@ -126,13 +127,19 @@ def run_rank():
             print(doc.article.title, doc.article.document.url)
 
 
+def run_evaluation():
+    with open("queries.txt", "r") as queries_file:
+        queries = list(map(str.strip, queries_file.readlines()))
+    print(Evaluator().evaluate_to_latex(queries, "query.csv", "like.csv", relevance_cutoff=2))  
+
+
 def _read_file(path):
     with open(path, "r") as file:
         return " ".join(file.readlines())
 
 
 parser = argparse.ArgumentParser(description="Information Retrieval")
-parser.add_argument("mode", choices=["crawler", "parser", "index", "rank", "web", "doc2vec"])
+parser.add_argument("mode", choices=["crawler", "parser", "index", "rank", "web", "doc2vec", "evaluate"])
 
 
 if __name__ == "__main__":
@@ -149,3 +156,5 @@ if __name__ == "__main__":
         run_rank()
     elif args.mode == "doc2vec":
         train_doc2vec()
+    elif args.mode == "evaluate":
+        run_evaluation()
