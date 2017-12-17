@@ -103,8 +103,11 @@ We implemented TF-IDF with cosine similarity for ranking.
 
 We used inverted index constructed previously to calculate TF-IDF. 
 
-To improve search perfomance, for each document its vector is constructed once and then stored in memory.
-Also, to decrease memory usage and improve search perfomance even further, vectors are stored in a sparse form.
+To improve search perfomance, for each document its vector is constructed once and then stored on disk. 
+These vectors are stored in a several files, each file containing a batch of vectors.
+To decrease memory usage and improve search perfomance even further, vectors are stored in a sparse form.
+
+When answering a query, we retrieve only documents that contain at least one term from the query and then sort them.
 
 
 \section{Features}
