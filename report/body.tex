@@ -104,7 +104,7 @@ We implemented TF-IDF with cosine similarity for ranking.
 We used inverted index constructed previously to calculate TF-IDF. 
 
 To improve search perfomance, for each document its vector is constructed once and then stored on disk. 
-These vectors are stored in a several files, each file containing a batch of vectors.
+These vectors are stored in several files, each file contains a batch of vectors.
 To decrease memory usage and improve search perfomance even further, vectors are stored in a sparse form.
 
 When answering a query, we retrieve only documents that contain at least one term from the query and then sort them.
@@ -154,11 +154,14 @@ We decided to add an additional bar with buttons for each retrieved document. Us
 \section{Evaluation}
 
 We asked 8 assessors to help us evaluate our search service. 
-We provided them with 10 search queries listed below in the table and asked them to rank search results on a five-grade scale from 0 (irrelevant) up to 4 (vital document).
-Assessors submitted their responses via search page using evaluation buttions on a search result snippets.
 
-After that, we cleaned up their responses, removing extra queries and filtering out duplicate responses for the same query and document rank.
-We calculated several metrics based on cleaned responses: DCG, MAP, RR. We treated document as a relevant if it had average score no less than 2.
+\subsection{Offline evaluation}
+We provided them with 10 search queries listed below in the table and asked them to rank search results on a five-grade scale from 0 (irrelevant) up to 4 (vital document).
+
+Assessors submitted their assessments via search page using evaluation buttons on a search result snippets.
+
+After that, we cleaned up their assessments, removing extra queries and filtering out duplicate assessments for the same query and document rank.
+We calculated several metrics based on cleaned assessments: DCG, MAP, RR. We treated document as a relevant if it had average score no less than 2.
 
 \begin{table}
     \centering 
@@ -180,3 +183,27 @@ We calculated several metrics based on cleaned responses: DCG, MAP, RR. We treat
     \end{tabular}
     \caption{Search evaluation}
 \end{table}
+
+\subsection{Online evaluation}
+With our evaluation buttons, users can give us feedback about search quality while using our service.
+
+We store all assessments in the database. So we can calculate different metrics easily.
+
+\subsection{User study}
+We asked users about their experience with our search system.
+
+\textbf{Advantages}
+\begin{itemize}
+	\item Quick article search.
+	\item Simple, but comfortable UI.
+	\item Convenient evaluation buttons, which allow accessors to do their job without a headache.
+	\item Filters work perfectly.
+\end{itemize}
+
+\textbf{Disadvantages}
+\begin{itemize}
+	\item Keywords are not highlighted.
+	\item No additional snippets.
+	\item Some articles are in German.
+\end{itemize}	
+ 
