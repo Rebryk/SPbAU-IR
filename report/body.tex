@@ -2,8 +2,7 @@
 
 We developed a system for searching scientific articles.
 
-The data for our search engine is collected from online libraries like \url{arxiv.org} 
-and from publishers that have information about their articles available online (like \url{springer.com}).
+The data for our search engine is collected from online libraries and from publishers that have information about their articles available online.
 
 % a large number of pages
 Firstly, we crawled \texttt{20k} pages from these sources and saved them for future processing.
@@ -12,7 +11,7 @@ Then, we filtered irrelevant pages (those that doesn't contain an article descri
 For each relevant page, we extracted article's title, abstract, list of authors, date of publishing, etc.
 Also, we store a link for a PDF version of an article, if it's available.
 
-After that, we implemented a simple search engine for searching among these articles. We use \texttt{TF-IDF} for ranking. Also, we use \texttt{doc2vec} and \texttt{t-SNE} to draw articles on the 2 dimensional plane.
+After that, we implemented a simple search engine for searching among these articles. 
 
 At the end, we collected assessors' evaluations for search results. 
 Also, they provided us with feedback on their experience.
@@ -20,9 +19,18 @@ Also, they provided us with feedback on their experience.
 \section{System design}
 We use \texttt{Python 3}  for development and \texttt{PostgreSQL} database.
 
-Articles, processed articles' abstracts and inverted index are stored in a filesystem.
-Articles' metadata and PAF are stored in the database.
+Crawlers have own set of sources from where they are allowed to download articles. Also, there is no exchange of URLs between them. The current solution has some advantages over other approaches. For example, scalability. And of course, there are some disadvantages. For more information, see \texttt{DATA ACQUISITION} section.
 
+Articles, processed articles' abstracts and inverted index are stored in a filesystem. To store it in the database is an ineffective approach.
+Articles' metadata and PAF are structured data. Thus, they are stored in the database.
+
+We decided to use cos distance for ranking, where vector representations of  articles were built using \texttt{TF-IDF}. It is simple and light solution.
+
+The web interface of our system is implemented using \texttt{Flask} and \texttt{Angular}. \texttt{Flask} is one of the well-known web frameworks for python. It is easy to find documentation and a lot of tutorials. So we decided to use it. 
+
+\texttt{doc2vec} and \texttt{t-SNE} are used for drawing search results on the 2-dimensional plane. It's called article map. We do not use \texttt{word2vec} because it is difficult to build article's vector representation based on vector representations of words the article contains.
+
+To make the evaluation process of search quality easier, we implemented an additional bar with buttons, using which assessors can mark how relevant retrieved documents are.  
 
 
 \section{Data acquisition}
@@ -42,7 +50,6 @@ The key details of out implementation are:
         The problem with Python's multithreading is that only one thread can be run at a time because of \texttt{GIL}, so we use multiprocessing instead.
         Each crawler runs in its own process and several crawlers can be run simultaneously.
 
-		\pagebreak
 		Crawlers do not exchange URLs. This solution is suitable in our case because:
 		\begin{enumerate}
             \item
@@ -82,8 +89,8 @@ Data processing is done as follows:
 
 \end{enumerate}
 
-Raw and processed article's abstract are stored in the filesystem,
-other information (like title, list of authors, link to PDF if available) is put into database
+Raw and processed articles' abstracts are stored in the filesystem,
+other information (like title, list of authors, link to PDF if available) is put into database.
 
 We use \texttt{BeautifulSoup} for webpage parsing, and \texttt{NLTK} for abstract processing.
 
@@ -149,15 +156,15 @@ We decided to add an additional bar with buttons for each retrieved document. Us
   \label{fig:search_page}
 \end{figure}
 
+\section{Evaluation}
+
+We asked 8 assessors to help us evaluate our search service. 
+
 \begin{figure}
   \includegraphics[width=\linewidth]{screenshot_2.png}
   \caption{Feedback tool}
   \label{fig:search_page}
 \end{figure}
-
-\section{Evaluation}
-
-We asked 8 assessors to help us evaluate our search service. 
 
 \subsection{Offline evaluation}
 We provided them with 10 search queries listed below in the table and asked them to rank search results on a five-grade scale from 0 (irrelevant) up to 4 (vital document).
