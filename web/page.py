@@ -1,12 +1,13 @@
 import json
 import logging
-
 from datetime import datetime
 
+import matplotlib.pyplot as plt
 from flask import render_template, request, jsonify
 from pony.orm import select, db_session, commit
 
 from data import Article, Query, Like
+from doc2vec import Doc2VecModel
 from index import InvertedIndex
 from ranker import TfIdf, AbstractAndArticle
 from text_processing import TextProcessor
@@ -20,6 +21,8 @@ VECTORS_SAVE_FOLDER = "ranker"
 
 ranker = None
 logger = logging.getLogger(__name__)
+
+model = Doc2VecModel.load_model("doc2vec/model.dump")
 
 
 def _read_file(path):
@@ -43,6 +46,27 @@ def in_date_range(date, from_date, to_date):
         return False
 
     return True
+
+
+def draw_map(query_id, ids):
+    x, y = [], []
+
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+
+    for vec in model.vecs2d.values():
+        x.append(vec[0])
+        y.append(vec[1])
+
+    ax.scatter(x, y, s=1)
+    for vec_id in ids:
+        vec = model.vecs2d[vec_id]
+        ax.scatter(vec[0], vec[1])
+
+    # query_text
+
+    #fig.savefig("images/{}.png".format(query_id))
+    fig.savefig("web/static/index.png")
+
 
 
 @db_session
@@ -76,7 +100,6 @@ def like_document():
 @app.route("/")
 def search_page():
     return render_template("index.html")
-
 
 
 @app.route('/search', methods=['POST'])
@@ -121,6 +144,8 @@ def get_counts():
 
     results = results[:TOP_COUNT_RESULT]
     query.results_count = len(results)
+
+    draw_map(query.id, set(map(lambda it: it["id"], results)))
 
     return jsonify(results)
 

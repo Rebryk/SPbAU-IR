@@ -5,10 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="{{url_for('.static', filename='style.css')}}">
+
+    <script type = "text/javascript">
+          function updateImage() {
+              document.getElementById("img").src = "../static/index.png?" + new Date().getTime();
+              console.log(document.getElementById("img").src);
+          }
+
+          function startTimer() {
+              setInterval(updateImage, 1000);
+          }
+      </script>
 </head>
-<body ng-controller="SearchEngineController">
+<body ng-controller="SearchEngineController" onload = "startTimer()">
 <div class="container-fluid">
-    <div class="col nopadding">
+    <h1>{{image_src}}</h1>
+    <div class="col-md-6 nopadding">
         <div class="row" id="header">
             <h1>Article Retrieval System</h1>
             <form role="form" ng-submit="getResults()" id="query-box">
@@ -36,11 +48,16 @@
                     <span class="document-date">{{document.date}}</span>
 
                     <br>
-                    <a href="" id={{document.query_id}},{{document.rank}},4 onclick="like(this); return false;" class="btn btn-xs btn-success pull-right document-good">4</a>
-                    <a href="" id={{document.query_id}},{{document.rank}},3 onclick="like(this); return false;" class="btn btn-xs btn-success pull-right document-good">3</a>
-                    <a href="" id={{document.query_id}},{{document.rank}},2 onclick="like(this); return false;" class="btn btn-xs btn-success pull-right document-good">2</a>
-                    <a href="" id={{document.query_id}},{{document.rank}},1 onclick="like(this); return false;" class="btn btn-xs btn-success pull-right document-good">1</a>
-                    <a href="" id={{document.query_id}},{{document.rank}},0 onclick="like(this); return false;" class="btn btn-xs btn-success pull-right document-good">0</a>
+                    <a href="" id={{document.query_id}},{{document.rank}},4 onclick="like(this); return false;"
+                       class="btn btn-xs btn-success pull-right document-good">4</a>
+                    <a href="" id={{document.query_id}},{{document.rank}},3 onclick="like(this); return false;"
+                       class="btn btn-xs btn-success pull-right document-good">3</a>
+                    <a href="" id={{document.query_id}},{{document.rank}},2 onclick="like(this); return false;"
+                       class="btn btn-xs btn-success pull-right document-good">2</a>
+                    <a href="" id={{document.query_id}},{{document.rank}},1 onclick="like(this); return false;"
+                       class="btn btn-xs btn-success pull-right document-good">1</a>
+                    <a href="" id={{document.query_id}},{{document.rank}},0 onclick="like(this); return false;"
+                       class="btn btn-xs btn-success pull-right document-good">0</a>
                     <span class="document-relevance pull-right">Relevance:</span>
                     <br>
 
@@ -56,8 +73,8 @@
             </div>
         </div>
     </div>
-    <div class="col">
-
+    <div class="col-md-6">
+        <img src="{{ url_for('static', filename='index.png') }}" align="right" id="img" alt="Articles map">
     </div>
 </div>
 
@@ -95,6 +112,10 @@
             btn.style.backgroundColor = "#398439";
         });
     }
+
+
+
+
 
 
 </script>
