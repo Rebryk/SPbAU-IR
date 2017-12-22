@@ -5,8 +5,7 @@ We developed a system for searching scientific articles.
 The data for our search engine is collected from online libraries like \url{arxiv.org} 
 and from publishers that have information about their articles available online (like \url{springer.com}).
 
-% a large number of pages
-Firstly, we crawled \texttt{20k} pages from these sources and saved them for future processing.
+Firstly, we crawled \texttt{50k} pages from these sources and saved them for future processing.
 
 Then, we filtered irrelevant pages (those that doesn't contain an article description) and processed the rest of the documents.
 For each relevant page, we extracted article's title, abstract, list of authors, date of publishing, etc.
@@ -116,15 +115,18 @@ When answering a query, we retrieve only documents that contain at least one ter
 
 \section{Features}
 \subsection{Article similarity graph}
-We want to plot aricles as points on 2D plane in a way that articles that are ``similar'' would be close to each other as points on plane.
+We want to associate each article with a point on 2D plane.
+The expected property of these points is that we want close points correspond to the ``similar'' articles.
+By the similarity of the articles we mean that they have similar meaning, common theme etc.
 
-One has an opportunity to see the given documents on this map and click on neighbor articles to open them. 
+To measure ``similarity'' of articles we're using gensim's \texttt{doc2vec} model. 
+Each article is associated with a multidimensional vector which has been trained using this model.
+Then, we reduce dimension of those vectors to 2 using \texttt{t-SNE}.
 
-To measure ``similarity'' of articles we're going to use doc2vec. 
-Unfortunatelly, training doc2vec takes some time, so for now we implemented more simple approach.
-We use pretrained word2vec to get a vector for each term in an article and then use mean value of these vectors as a document's vector.
+The problem is that for the majority of search queries the top 5 articles are not located close to each other.
+Most likely this problem can be solved by obtaining larger dataset of articles and by tuning \texttt{doc2vec's} hyperparameters.
 
-Later, we're going to compare this two approaches (but most likely, trained doc2vec would be better)
+However, for some queries results are pretty nice, see the picture below.
 
 \subsection{Authors graph}
 The same feature will be implemented for authors. 
@@ -147,6 +149,12 @@ We decided to add an additional bar with buttons for each retrieved document. Us
   \includegraphics[width=\linewidth]{screenshot_1.png}
   \caption{Search page}
   \label{fig:search_page}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{screenshot_3.png}
+  \caption{Article map for ``Neural networks'' query}
+  \label{fig:article_map}
 \end{figure}
 
 \begin{figure}
