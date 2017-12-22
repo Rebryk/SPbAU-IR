@@ -72,6 +72,8 @@ We store each HTML page we crawled in a filesystem and put some page's metadata
 
 We crawled articles from \texttt{arxiv.org} and \texttt{springer.com}. But it is not difficult to add new article sources by creating your own parsers. We just have an interface which you need to implement.
 
+\newpage
+
 \section{Data processing and storage}
 
 As we have a few data sources and we need a specific information extracted from crawled documents
@@ -82,9 +84,12 @@ Data processing is done as follows:
 
 \item Firstly, we filter out pages that doesn't contain an article.
 
-\item Then, we extract relevant parts of remained pages and transform it to a plaintext, removing all the HTML tags.
+\item Then, we extract relevant parts of remained pages and transform it to a plaintext, removing all the HTML tags. 
+    The extraction process is different for different data sources because of a different structure of web pages.
 
-\item After that, article's abstract is processed for future indexing, stemming its words and removing stopwords and punctiation
+\item After that, article's abstract is processed for future indexing, stemming its words and removing stopwords and punctiation.
+    We use list of stopwords provided by text processing library.
+
 
 \end{enumerate}
 
@@ -135,6 +140,18 @@ Most likely this problem can be solved by obtaining larger dataset of articles a
 
 However, for some queries results are pretty nice, see the picture below.
 
+\begin{figure}
+  \includegraphics[width=\linewidth]{screenshot_3.png}
+  \caption{Article map for ``Neural networks'' query}
+
+  In this map one can see a cluster of three points that are very close to each other.
+  These articles are about using neural networks for face recongintion problem, while the other two articles are about neural networks in general.
+
+  So, this example shows that for some queries article map works well.
+  However, it's not true for all the possible queries.
+  \label{fig:article_map}
+\end{figure}
+
 \subsection{Authors graph}
 The same feature will be implemented for authors. 
 
@@ -162,11 +179,6 @@ We decided to add an additional bar with buttons for each retrieved document. Us
 
 We asked 8 assessors to help us evaluate our search service. 
 
-\begin{figure}
-  \includegraphics[width=\linewidth]{screenshot_3.png}
-  \caption{Article map for ``Neural networks'' query}
-  \label{fig:article_map}
-\end{figure}
 
 \begin{figure}
   \includegraphics[width=\linewidth]{screenshot_2.png}
@@ -197,7 +209,8 @@ We calculated several metrics based on cleaned assessments: DCG, MAP, RR. We tre
         statistics & 48.747 & 1.000 & 1.000 \\  
         linear programming & 11.905 & 0.250 & 0.250 \\  
         object detection & 26.698 & 0.700 & 1.000 \\  
-        music generation & 24.721 & 0.583 & 0.500 \\  
+        music generation & 24.721 & 0.583 & 0.500 \\ \hline 
+        Mean metric value & 25.093 & 0.634 & 0.650 \\  
         \bottomrule
     \end{tabular}
     \caption{Search evaluation}
