@@ -239,6 +239,16 @@ We asked users about their experience with our search system.
 	\item Some articles are in German.
 \end{itemize}	
  
+\section{Problems encountered}
+Unfortunatelly, one of our data sources (\texttt{arxiv.org}) has specified a very large delay for robots in its \texttt{robots.txt} (15 seconds of delay between queries).
+Actually, it was possible to make a request every 5 seconds without getting banned, but it was still a pretty large delay for us. 
+It means that we crawled much less articles from \texttt{arxiv.org} than from \texttt{springer.com}.
+
+Another problem is that not all crawled pages are relevant for us. In fact, only about 11\% of crawled pages contained an article. 
+So we had to crawl much more pages to collect a large article base.
+
+Unfortunatelly, our \texttt{doc2vec} model quality is not as good as we expected it to be. 
+But we believe we can greatly improve map quality by increasing amount of articles
 \section{Summary}
 We designed and developed the system for searching scientific articles from \texttt{arxiv.org} and \texttt{springer.com}. But it is not difficult to add new article sources by implementing your own parsers.
 
