@@ -1,6 +1,6 @@
 \section{Project Description}
 
-We are developing a system for searching scientific articles.
+We developed a system for searching scientific articles.
 
 The data for our search engine is collected from online libraries like \url{arxiv.org} 
 and from publishers that have information about their articles available online (like \url{springer.com}).
@@ -12,15 +12,17 @@ Then, we filtered irrelevant pages (those that doesn't contain an article descri
 For each relevant page, we extracted article's title, abstract, list of authors, date of publishing, etc.
 Also, we store a link for a PDF version of an article, if it's available.
 
-After that, we are going to implement a search engine for searching among these articles. \textbf{We will discuss it later}.
+After that, we implemented a simple search engine for searching among these articles. We use \texttt{TF-IDF} for ranking. Also, we use \texttt{doc2vec} and \texttt{t-SNE} to draw articles on the 2 dimensional plane.
 
-The key feature of our service will be creating some kind of graph over authors/articles and their references to each other. \textbf{We will discuss it later}.
+At the end, we collected assessors' evaluations for search results. 
+Also, they provided us with feedback on their experience.
 
 \section{System design}
 We use \texttt{Python 3}  for development and \texttt{PostgreSQL} database.
 
 Articles, processed articles' abstracts and inverted index are stored in a filesystem.
 Articles' metadata and PAF are stored in the database.
+
 
 
 \section{Data acquisition}
@@ -61,6 +63,8 @@ The key details of out implementation are:
 
 We store each HTML page we crawled in a filesystem and put some page's metadata 
 (like its URL, hash of page content, date of last page modify) in database. Duplicated pages (with equal hashes) are ignored.
+
+We crawled articles from \texttt{arxiv.org} and \texttt{springer.com}. But it is not difficult to add new article sources by creating your own parsers. We just have an interface which you need to implement.
 
 \section{Data processing and storage}
 
@@ -195,7 +199,7 @@ We asked users about their experience with our search system.
 \textbf{Advantages}
 \begin{itemize}
 	\item Quick article search.
-	\item Simple, but comfortable UI.
+	\item Simple, but nice UI.
 	\item Convenient evaluation buttons, which allow accessors to do their job without a headache.
 	\item Filters work perfectly.
 \end{itemize}
@@ -207,3 +211,17 @@ We asked users about their experience with our search system.
 	\item Some articles are in German.
 \end{itemize}	
  
+\section{Summary}
+We designed and developed the system for searching scientific articles from \texttt{arxiv.org} and \texttt{springer.com}. But it is not difficult to add new article sources by implementing your own parsers.
+
+Users can use the system to search articles with specified date range. Also, they are provided with an article map, where search results are highlighted.
+
+Search quality is not bad. We think, that if we download more articles, we will significantly improve it. Especially, if we skip articles written not in English.
+
+\subsection{Future work}
+First of all, we need to implement dynamic article map. It will allow users to explore articles more easily and conveniently.
+
+Secondly, it is better to implement multithreading backend. Flask uses single thread by default. 
+
+Also, we can crawl more articles to improve the quality of our search system.
+
