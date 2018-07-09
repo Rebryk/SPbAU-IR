@@ -1,6 +1,7 @@
 # Crawler
 
-The crawler for the article retrieval system.
+The crawler for the article retrieval system. <br>
+Read our [report](https://github.com/rebryk/SPbAU-IR/blob/master/report/report.pdf).
 
 ## Installation
 Python 3 is required
