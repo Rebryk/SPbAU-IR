@@ -62,9 +62,6 @@ def draw_map(query_id, ids):
         vec = model.vecs2d[vec_id]
         ax.scatter(vec[0], vec[1])
 
-    # query_text
-
-    #fig.savefig("images/{}.png".format(query_id))
     fig.savefig("web/static/index.png")
 
 

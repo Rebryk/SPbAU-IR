@@ -18,7 +18,7 @@ class Doc2VecModel:
 
         model = Doc2Vec(size=self.vec_dim)
         model.build_vocab(train_docs)
-        model.train(train_docs, epochs=epochs, total_examples=len(train_docs), compute_loss=True)
+        model.train(train_docs, epochs=epochs, total_examples=len(train_docs))
 
         vecs = {doc.id: model.docvecs[doc.id] for doc in documents}
         vecs2d = TSNE().fit_transform(list(vecs.values()))

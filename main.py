@@ -59,23 +59,26 @@ def start_crawlers():
 def parse_documents():
     arxiv_parser = ArxivParser(TextProcessor())
     springer_parser = SpringerParser(TextProcessor())
+
     for document in Document.select(lambda doc: not doc.is_processed):
         if "arxiv.org" in urlparse(document.url)[1]:
             cur_parser = arxiv_parser
         elif "springer.com" in urlparse(document.url)[1]:
             cur_parser = springer_parser
         else:
-            print(document.url)
             continue
+
         page = WebPage.from_disk(document.url, document.file_path)
+
         if document.document_hash != page.page_hash:
             Document[document.id].delete()
             continue
+
         parsed = cur_parser.parse(page)
         document.is_processed = True
         commit()
 
-        print(("Article: {}" if parsed else "{}").format(document.url))
+        logging.debug(("Article: {}" if parsed else "{}").format(document.url))
 
 
 @db_session

@@ -1,6 +1,6 @@
 {
-  "database": "information_retrieval",
-  "user": "tehnar",
-  "password": "Password",
+  "database": "ir",
+  "user": "postgres",
+  "password": "postgres",
   "host": "localhost"
 }

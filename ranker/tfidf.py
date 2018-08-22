@@ -23,7 +23,7 @@ class TfIdf(Ranker):
         self.vectors_per_file = vectors_per_file
         for i, token in enumerate(self.index.keys()):
             self.token_id[token] = i
-        self.vectors_save_folder= vectors_save_folder
+        self.vectors_save_folder = vectors_save_folder
 
         for i in range(0, len(documents), self.vectors_per_file):
             document_batch = documents[i: min(len(documents), i + self.vectors_per_file)]
@@ -39,7 +39,7 @@ class TfIdf(Ranker):
 
                     dump_file.write("\n")
 
-        self.dump_files_count = (len(documents) + self.vectors_per_file - 1) // len(documents)
+        self.dump_files_count = (len(documents) + min(self.vectors_per_file, len(documents)) - 1) // len(documents)
 
     @staticmethod
     def _cos_dist(query_vec, query_norm, doc_vec, doc_norm):
