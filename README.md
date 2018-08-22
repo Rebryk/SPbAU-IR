@@ -19,7 +19,7 @@ You should modify two configuration files to crawl websites:
 Example of `crawler.json`
 ```
 {
-  "user_agent": "",
+  "user_agent": "crawler-bot",
   "max_pages_count": 100000,
   "max_depth": 10,
   "delay": 50,
